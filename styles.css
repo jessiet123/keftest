@@ -1,12 +1,14 @@
 html {
-	font-family: Arial,Helvetica,sans-serif;
+	font-family: Roboto,Arial,Helvetica,sans-serif;
 	font-size: 100%;
 }
 
 h1 {
 	font-size: 2rem;
+	color:#2e2d62;
 }
 
 p {
 	font-size: 0.8rem;
+	color:#676767;
 }
