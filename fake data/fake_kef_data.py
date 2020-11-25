@@ -1,6 +1,8 @@
 from faker import Faker
 from faker.providers import lorem
 import csv
+import numpy as np
+import pandas as pd
 
 """Set up the generator"""
 fake = Faker()
@@ -85,7 +87,6 @@ perspectives = [
         ]}
 ]
 
-print(perspectives[0].get('name'))
 all_items = []
 
 for provider in providers:
@@ -132,13 +133,14 @@ for provider in providers:
 
             all_items = all_items + items
 
-for item in all_items:
-    print(item)
+"""Calculate 3-yr average and decile"""
+df = pd.DataFrame(all_items)
+df['3 Year Perspective Average'] = df.groupby(['Provider UKPRN', 'Perspective', 'Cluster'])[
+    'Perspective Score'] \
+    .transform('mean')
 
-with open("fake_kef_data.csv", 'wt') as csvFile:
-        field_names = list(all_items[0].keys())
-        print(field_names)
-        writer = csv.DictWriter(csvFile, fieldnames=field_names)
-        writer.writeheader()
-        for item in all_items:
-            writer.writerow({field_names[i]: item.get(field_names[i]) for i in range(0, len(field_names), 1)})
+df['3 Year Perspective Decile'] = df.groupby(['Perspective', 'Cluster'])['3 Year Perspective Average'] \
+    .transform(
+    lambda x: pd.qcut(x, 10, duplicates='drop', labels=False))
+
+df.to_csv("fake_kef_data.csv", index=False)
