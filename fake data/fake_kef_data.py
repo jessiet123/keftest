@@ -120,6 +120,7 @@ for provider in providers:
                     'Perspective Id': perspective.get('id'),
                     'Has Narrative': perspective.get('has narrative'),
                     'Narrative': narrative,
+                    'Institution Context Summary': fake.text(max_nb_chars=300),
                     'Metric': metric,
                     'Metric Score': rand
                 }
@@ -135,12 +136,12 @@ for provider in providers:
 
 """Calculate 3-yr average and decile"""
 df = pd.DataFrame(all_items)
-df['3 Year Perspective Average'] = df.groupby(['Provider UKPRN', 'Perspective', 'Cluster'])[
+df['3 Year Perspective Average'] = df.groupby(['Provider UKPRN', 'Perspective'])[
     'Perspective Score'] \
-    .transform('mean')
+    .transform("mean")
 
-df['3 Year Perspective Decile'] = df.groupby(['Perspective', 'Cluster'])['3 Year Perspective Average'] \
+df['3 Year Perspective Decile'] = df.groupby(['Perspective'])['3 Year Perspective Average'] \
     .transform(
-    lambda x: pd.qcut(x, 10, duplicates='drop', labels=False))
+    lambda x: pd.qcut(x, 10, duplicates='drop', labels=False)+1)
 
 df.to_csv("fake_kef_data.csv", index=False)
