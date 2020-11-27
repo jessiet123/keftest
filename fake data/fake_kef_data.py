@@ -120,7 +120,6 @@ for provider in providers:
                     'Perspective Id': perspective.get('id'),
                     'Has Narrative': perspective.get('has narrative'),
                     'Narrative': narrative,
-                    'Institution Context Summary': fake.text(max_nb_chars=300),
                     'Metric': metric,
                     'Metric Score': rand
                 }
