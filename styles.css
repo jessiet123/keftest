@@ -8,6 +8,12 @@ article {
     margin:auto;
 }
 
+footer {
+	font-size: 0.8rem;
+    max-width:1000px;
+    margin:auto;
+}
+
 h1 {
 	font-size: 1.2rem;
 	font-weight: normal;
