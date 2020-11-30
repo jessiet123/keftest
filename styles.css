@@ -3,9 +3,18 @@ html {
     font-size: 100%;
 }
 
+header {
+    max-width: 1000px;
+    margin: auto;
+}
+
 article {
     max-width: 1000px;
     margin: auto;
+}
+
+nav {
+    text-align: right;
 }
 
 nav li {
