@@ -27,12 +27,13 @@ nav li a {
     text-decoration: none;
     padding: 15px 0 5px 0;
     position: relative;
+    border-bottom: 3px solid white;
+
 }
 
 nav li a:hover {
     border-bottom: 3px solid #acbd37;
     border-radius: 0px;
-    transition: all .3s ease;
 }
 
 footer {
