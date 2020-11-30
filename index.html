@@ -64,15 +64,15 @@
     <script type='text/javascript'>
         var divElement = document.getElementById('viz1606477953851');
         var vizElement = divElement.getElementsByTagName('object')[0];
-        if (divElement.offsetWidth > 800) {
+        if (divElement.offsetWidth >= 992) {
             vizElement.style.minWidth = '960px';
             vizElement.style.maxWidth = '100%';
             vizElement.style.minHeight = '850px';
             vizElement.style.maxHeight = (divElement.offsetWidth * 0.75) + 'px';
         } else if (divElement.offsetWidth > 500) {
-            vizElement.style.minWidth = '960px';
+            vizElement.style.width = '100%';
             vizElement.style.maxWidth = '100%';
-            vizElement.style.minHeight = '850px';
+            vizElement.style.minHeight = '1650px';
             vizElement.style.maxHeight = (divElement.offsetWidth * 0.75) + 'px';
         } else {
             vizElement.style.width = '100%';
