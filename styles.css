@@ -21,7 +21,7 @@ nav li {
     font-size: 16px;
 }
 
-nav li a {
+nav li a, nav a {
     display: block;
     color: #2e2d62;
     text-decoration: none;
