@@ -135,11 +135,20 @@ for provider in providers:
 
 """Calculate 3-yr average and decile"""
 df = pd.DataFrame(all_items)
+
+df['3 Year Metric Average'] = df.groupby(['Provider UKPRN', 'Metric'])[
+    'Metric Score'] \
+    .transform("mean")
+
+df['3 Year Metric Decile'] = 11 - df.groupby(['Metric'])['3 Year Metric Average'] \
+    .transform(
+    lambda x: pd.qcut(x, 10, duplicates='drop', labels=False)+1)
+
 df['3 Year Perspective Average'] = df.groupby(['Provider UKPRN', 'Perspective'])[
     'Perspective Score'] \
     .transform("mean")
 
-df['3 Year Perspective Decile'] = df.groupby(['Perspective'])['3 Year Perspective Average'] \
+df['3 Year Perspective Decile'] = 11 - df.groupby(['Perspective'])['3 Year Perspective Average'] \
     .transform(
     lambda x: pd.qcut(x, 10, duplicates='drop', labels=False)+1)
 
