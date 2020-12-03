@@ -91,7 +91,9 @@ all_items = []
 
 for provider in providers:
     provider_name = "University " + str(provider)
+    provider_institution_context = provider_name + " lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam lobortis enim id lacus mollis, at malesuada erat posuere. Vestibulum ac consequat urna. Nullam in accumsan purus. Vivamus laoreet egestas ligula ut aliquam. Nulla eu tristique metus. In luctus magna in dictum auctor. Integer felis orci, consequat ac tempus quis, iaculis a ex. Vivamus ut ex at nibh pulvinar gravida. Fusce at justo odio. Suspendisse et diam vitae arcu rutrum sollicitudin. Nulla facilisi. Ut quis quam nisi. Praesent eu metus arcu. Maecenas id euismod eros, vitae euismod libero. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Donec urna massa, eleifend at elementum eu, luctus id lorem. Praesent nec dui sollicitudin, posuere odio sit amet, elementum enim."
     provider_cluster = fake.random.choice(clusters)
+    provider_cluster_description = "Cluster "+provider_cluster+" lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam lobortis enim id lacus mollis, at malesuada erat posuere."
     provider_ukprn = '000' + str(provider)
     for year in years:
         for perspective in perspectives:
@@ -109,13 +111,15 @@ for provider in providers:
 
                 narrative = None
                 if perspective.get('has narrative'):
-                    narrative = fake.text(max_nb_chars=300)
+                    narrative = fake.text(max_nb_chars=850)
 
                 item = {
                     'Academic Year': year,
                     'Provider Name': provider_name,
                     'Provider UKPRN': provider_ukprn,
+                    'Provider Institution Context': provider_institution_context,
                     'Cluster': provider_cluster,
+                    'Cluster Description': provider_cluster_description,
                     'Perspective': perspective.get('name'),
                     'Perspective Id': perspective.get('id'),
                     'Has Narrative': perspective.get('has narrative'),
