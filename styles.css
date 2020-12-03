@@ -27,12 +27,12 @@ nav li a, nav a {
     text-decoration: none;
     padding: 15px 0 5px 0;
     position: relative;
-    border-bottom: 3px solid #ff6900;
+    border-bottom: 3px solid #f8f9fa;
 
 }
 
 nav li a:hover {
-    border-bottom: 3px solid #acbd37;
+    border-bottom: 3px solid #ff6900;
     border-radius: 0px;
 }
 
