@@ -1,7 +1,5 @@
 from faker import Faker
 from faker.providers import lorem
-import csv
-import numpy as np
 import pandas as pd
 
 """Set up the generator"""
@@ -106,8 +104,8 @@ for provider in providers:
                 rand = fake.random.normalvariate(50, 30)/100
                 if rand < 0:
                     rand = 0
-                if rand > 100:
-                    rand = 100
+                if rand > 1:
+                    rand = 1
 
                 narrative = None
                 if perspective.get('has narrative'):
@@ -128,28 +126,23 @@ for provider in providers:
                     'Metric Score': rand
                 }
                 items.append(item)
-                perspective_total += rand
-
-            perspective_average = perspective_total / perspective.get('metrics').__len__()
-
-            for item in items:
-                item['Perspective Score'] = perspective_average
 
             all_items = all_items + items
 
 """Calculate 3-yr average and decile"""
 df = pd.DataFrame(all_items)
 
-df['3 Year Metric Average'] = df.groupby(['Provider UKPRN', 'Metric'])[
-    'Metric Score'] \
+df['Perspective Score'] = df.groupby(['Provider UKPRN', 'Perspective', 'Academic Year'])['Metric Score']\
+    .transform("mean")
+
+df['3 Year Metric Average'] = df.groupby(['Provider UKPRN', 'Metric'])['Metric Score'] \
     .transform("mean")
 
 df['3 Year Metric Decile'] = 11 - df.groupby(['Metric'])['3 Year Metric Average'] \
     .transform(
     lambda x: pd.qcut(x, 10, duplicates='drop', labels=False)+1)
 
-df['3 Year Perspective Average'] = df.groupby(['Provider UKPRN', 'Perspective'])[
-    'Perspective Score'] \
+df['3 Year Perspective Average'] = df.groupby(['Provider UKPRN', 'Perspective'])['Perspective Score'] \
     .transform("mean")
 
 df['3 Year Perspective Decile'] = 11 - df.groupby(['Perspective'])['3 Year Perspective Average'] \
