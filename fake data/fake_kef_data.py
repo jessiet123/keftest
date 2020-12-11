@@ -89,9 +89,23 @@ all_items = []
 
 for provider in providers:
     provider_name = "University " + str(provider)
-    provider_institution_context = provider_name + " lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam lobortis enim id lacus mollis, at malesuada erat posuere. Vestibulum ac consequat urna. Nullam in accumsan purus. Vivamus laoreet egestas ligula ut aliquam. Nulla eu tristique metus. In luctus magna in dictum auctor. Integer felis orci, consequat ac tempus quis, iaculis a ex. Vivamus ut ex at nibh pulvinar gravida. Fusce at justo odio. Suspendisse et diam vitae arcu rutrum sollicitudin. Nulla facilisi. Ut quis quam nisi. Praesent eu metus arcu. Maecenas id euismod eros, vitae euismod libero. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Donec urna massa, eleifend at elementum eu, luctus id lorem. Praesent nec dui sollicitudin, posuere odio sit amet, elementum enim."
+    provider_institution_context = provider_name + " lorem ipsum dolor sit amet; consectetur adipiscing elit. Aliquam " \
+                                                   "lobortis enim id lacus mollis; at malesuada erat posuere. " \
+                                                   "Vestibulum ac consequat urna. Nullam in accumsan purus. Vivamus " \
+                                                   "laoreet egestas ligula ut aliquam. Nulla eu tristique metus. " \
+                                                   "In luctus magna in dictum auctor. Integer felis orci; consequat ac " \
+                                                   "tempus quis; iaculis a ex. Vivamus ut ex at nibh pulvinar gravida. " \
+                                                   "Fusce at justo odio. Suspendisse et diam vitae arcu rutrum " \
+                                                   "sollicitudin. Nulla facilisi. Ut quis quam nisi. Praesent eu metus " \
+                                                   "arcu. Maecenas id euismod eros; vitae euismod libero. Class aptent " \
+                                                   "taciti sociosqu ad litora torquent per conubia nostra; per " \
+                                                   "inceptos himenaeos. Donec urna massa; eleifend at elementum eu; " \
+                                                   "luctus id lorem. Praesent nec dui sollicitudin; posuere odio sit " \
+                                                   "amet, elementum enim."
     provider_cluster = fake.random.choice(clusters)
-    provider_cluster_description = "Cluster "+provider_cluster+" lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam lobortis enim id lacus mollis, at malesuada erat posuere."
+    provider_cluster_description = "Cluster "+provider_cluster+" lorem ipsum dolor sit amet; consectetur adipiscing " \
+                                                               "elit. Aliquam lobortis enim id lacus mollis; at " \
+                                                               "malesuada erat posuere."
     provider_ukprn = '000' + str(provider)
     for year in years:
         for perspective in perspectives:
@@ -132,6 +146,7 @@ for provider in providers:
 """Calculate 3-yr average and decile"""
 df = pd.DataFrame(all_items)
 
+
 df['Perspective Score'] = df.groupby(['Provider UKPRN', 'Perspective', 'Academic Year'])['Metric Score']\
     .transform("mean")
 
@@ -142,10 +157,16 @@ df['3 Year Metric Decile'] = 11 - df.groupby(['Metric'])['3 Year Metric Average'
     .transform(
     lambda x: pd.qcut(x, 10, duplicates='drop', labels=False)+1)
 
+df['3 Year Metric Scaled'] = df.groupby(['Metric'])['3 Year Metric Average'] \
+    .transform(lambda x: (x-min(x))/(max(x)-min(x)))
+
 df['3 Year Perspective Average'] = df.groupby(['Provider UKPRN', 'Perspective'])['Perspective Score'] \
     .transform("mean")
 
-df['3 Year Perspective Decile'] = 11 - df.groupby(['Perspective'])['3 Year Perspective Average'] \
+df['3 Year Perspective Scaled'] = df.groupby(['Perspective'])['3 Year Perspective Average'] \
+    .transform(lambda x: (x - min(x)) / (max(x) - min(x)))
+
+df['3 Year Perspective Decile'] = 11 - df.groupby(['Perspective'])['3 Year Perspective Scaled'] \
     .transform(
     lambda x: pd.qcut(x, 10, duplicates='drop', labels=False)+1)
 
