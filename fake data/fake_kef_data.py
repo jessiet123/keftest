@@ -9,7 +9,38 @@ fake.add_provider(lorem)
 
 providers = range(0, 140)
 years = ['2016', '2017', '2018']
-clusters = ['STEM', 'ARTS', 'E', 'M', 'X', 'J', 'V']
+clusters = [
+    {'Cluster': 'STEM', 'Description': "Specialist institutions covering science, technology, engineering and "
+                                       "mathematics (as defined by a very high concentration of academic staff in "
+                                       "these disciplines). Often high amounts of excellent research, particularly "
+                                       "in bioscience & veterinary and engineering."},
+    {'Cluster': 'ARTS', 'Description': "Specialist institutions covering arts, music and drama (as defined by a very "
+                                       "high concentration of academic staff in these disciplines). A range of sizes "
+                                       "of institutions, although many are relatively small and specialist"},
+    {'Cluster': 'E', 'Description': "Large universities with broad discipline portfolio across both STEM and non-STEM "
+                                    "generating excellent research across all disciplines. Significant amount of "
+                                    "research funded by government bodies/hospitals; 9.5% from industry. Large "
+                                    "proportion of part-time undergraduate students. Small postgraduate population "
+                                    "dominated by taught postgraduates."},
+    {'Cluster': 'M', 'Description': "Smaller universities, often with a teaching focus. Academic activity across "
+                                    "disciplines, particularly in other health domains and non-STEM. More research "
+                                    "activity funded by government bodies/hospitals; 14.7% from industry."},
+    {'Cluster': 'X', 'Description': "Large, high research intensive and broad-discipline universities undertaking "
+                                    "a significant amount of excellent research. Much of research funded by UKRI and "
+                                    "other government bodies; 8.5% from industry. Discipline portfolio balanced across "
+                                    "STEM and non-STEM although less clinical medicine activity. Large proportion of "
+                                    "taught postgraduates in student population."},
+    {'Cluster': 'J', 'Description': "Mid-sized universities with more of a teaching focus (although research is still"
+                                    " in evidence). Academic activity across STEM and non-STEM disciplines including"
+                                    " other health, computer sciences, architecture/planning, social sciences and"
+                                    " business, humanities, arts and design. Research activity funded largely by"
+                                    " government bodies/hospitals; 13.7% from industry."},
+    {'Cluster': 'V', 'Description': "Very large, very high research intensive and broad-discipline universities "
+                                    "undertaking significant amounts of excellent research. Research funded by range "
+                                    "of sources including UKRI, other government bodies and charities; "
+                                    "10.2% from industry. Significant activity in clinical medicine and STEM. "
+                                    "Student body includes significant numbers of taught and research postgraduates."}
+]
 
 """ Perspective metadata """
 perspectives = [
@@ -102,10 +133,9 @@ for provider in providers:
                                                    "inceptos himenaeos. Donec urna massa; eleifend at elementum eu; " \
                                                    "luctus id lorem. Praesent nec dui sollicitudin; posuere odio sit " \
                                                    "amet, elementum enim."
-    provider_cluster = fake.random.choice(clusters)
-    provider_cluster_description = "Cluster "+provider_cluster+" lorem ipsum dolor sit amet; consectetur adipiscing " \
-                                                               "elit. Aliquam lobortis enim id lacus mollis; at " \
-                                                               "malesuada erat posuere."
+    cluster = fake.random.choice(clusters)
+    provider_cluster = cluster['Cluster']
+    provider_cluster_description = cluster['Description']
     provider_ukprn = '000' + str(provider)
     for year in years:
         for perspective in perspectives:
@@ -146,11 +176,10 @@ for provider in providers:
 """Calculate 3-yr average and decile"""
 df = pd.DataFrame(all_items)
 
+df['Metric Scaled'] = df.groupby(['Metric', 'Academic Year'])['Metric Score'] \
+    .transform(lambda x: (x-min(x))/(max(x)-min(x)))
 
-df['Perspective Score'] = df.groupby(['Provider UKPRN', 'Perspective', 'Academic Year'])['Metric Score']\
-    .transform("mean")
-
-df['3 Year Metric Average'] = df.groupby(['Provider UKPRN', 'Metric'])['Metric Score'] \
+df['3 Year Metric Average'] = df.groupby(['Provider UKPRN', 'Metric'])['Metric Scaled'] \
     .transform("mean")
 
 df['3 Year Metric Decile'] = 11 - df.groupby(['Metric'])['3 Year Metric Average'] \
@@ -159,6 +188,9 @@ df['3 Year Metric Decile'] = 11 - df.groupby(['Metric'])['3 Year Metric Average'
 
 df['3 Year Metric Scaled'] = df.groupby(['Metric'])['3 Year Metric Average'] \
     .transform(lambda x: (x-min(x))/(max(x)-min(x)))
+
+df['Perspective Score'] = df.groupby(['Provider UKPRN', 'Perspective', 'Academic Year'])['Metric Scaled']\
+    .transform("mean")
 
 df['3 Year Perspective Average'] = df.groupby(['Provider UKPRN', 'Perspective'])['Perspective Score'] \
     .transform("mean")
@@ -171,3 +203,4 @@ df['3 Year Perspective Decile'] = 11 - df.groupby(['Perspective'])['3 Year Persp
     lambda x: pd.qcut(x, 10, duplicates='drop', labels=False)+1)
 
 df.to_csv("fake_kef_data.csv", index=False)
+
