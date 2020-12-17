@@ -192,8 +192,8 @@ df['3 Year Metric Scaled'] = df.groupby(['Metric'])['3 Year Metric Average'] \
 df['Perspective Score'] = df.groupby(['Provider UKPRN', 'Perspective', 'Academic Year'])['Metric Scaled']\
     .transform("mean")
 
-df['3 Year Perspective Average'] = df.groupby(['Provider UKPRN', 'Perspective'])['Perspective Score'] \
-    .transform("mean")
+# df['3 Year Perspective Average'] = df.groupby(['Provider UKPRN', 'Perspective'])['Perspective Score'] \
+#     .transform("mean")
 
 df['3 Year Perspective Scaled'] = df.groupby(['Perspective'])['3 Year Perspective Average'] \
     .transform(lambda x: (x - min(x)) / (max(x) - min(x)))
