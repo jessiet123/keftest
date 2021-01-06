@@ -60,60 +60,60 @@ perspectives = [
         'name': 'Working with business',
         'has narrative': False,
         'metrics':
-        [
-            'Innovate UK income (KTP and grant) as proportion of research income (Innovate UK)',
-            'HE-BCI contract research income with non-SME business normalised by HEI income',
-            'HE-BCI contract research income with SME business normalised by HEI income',
-            'HE-BCI Consultancy and facilities income with non -SME business normalised by HEI income',
-            'HE-BCI Consultancy and facilities income with SME business normalised by HEI income'
-        ]
+            [
+                'Innovate UK income (KTP and grant) as proportion of research income (Innovate UK)',
+                'HE-BCI contract research income with non-SME business normalised by HEI income',
+                'HE-BCI contract research income with SME business normalised by HEI income',
+                'HE-BCI Consultancy and facilities income with non -SME business normalised by HEI income',
+                'HE-BCI Consultancy and facilities income with SME business normalised by HEI income'
+            ]
     },
     {
         'id': 3,
         'name': 'Working with the public and third sector',
         'has narrative': False,
         'metrics':
-        [
-            'HE-BCI contract research income with the public and third sector normalised by HEI income',
-            'HE-BCI Consultancy and facilities income with the public and third sector normalised by HEI income'
-        ]},
+            [
+                'HE-BCI contract research income with the public and third sector normalised by HEI income',
+                'HE-BCI Consultancy and facilities income with the public and third sector normalised by HEI income'
+            ]},
     {
         'id': 4,
         'name': 'Skills, enterprise and entrepreneurship',
         'has narrative': False,
         'metrics':
-        [
-            'HE-BCI CPD/CE income normalised by HEI income',
-            'HE-BCI CPD/CE learner days delivered normalised by HEI income',
-            'HE-BCI Graduate start-ups rate by student FTE'
-        ]},
+            [
+                'HE-BCI CPD/CE income normalised by HEI income',
+                'HE-BCI CPD/CE learner days delivered normalised by HEI income',
+                'HE-BCI Graduate start-ups rate by student FTE'
+            ]},
     {
         'id': 5,
         'name': 'Local growth and regeneration',
         'has narrative': True,
         'metrics':
-        [
-            'Regeneration and development income from all sources normalised by HEI income'
-            'Additional narrative/contextual information - optional in year 1'
-        ]},
+            [
+                'Regeneration and development income from all sources normalised by HEI income'
+                'Additional narrative/contextual information - optional in year 1'
+            ]},
     {
         'id': 6,
         'name': 'IP and Commercialisation',
         'has narrative': False,
         'metrics':
-        [
-            'Estimated current turnover of all active firms per active spinout',
-            'Average external investment per formal spinout',
-            'Licensing and other IP income as proportion of research income'
-        ]},
+            [
+                'Estimated current turnover of all active firms per active spinout',
+                'Average external investment per formal spinout',
+                'Licensing and other IP income as proportion of research income'
+            ]},
     {
         'id': 7,
         'name': 'Public and community engagement',
         'has narrative': True,
         'metrics':
-        [
-            'Self assessment based metric - optional in year 1'
-        ]}
+            [
+                'Self assessment based metric - optional in year 1'
+            ]}
 ]
 
 all_items = []
@@ -145,7 +145,7 @@ for provider in providers:
 
             for metric in perspective.get('metrics'):
 
-                rand = fake.random.normalvariate(50, 30)/100
+                rand = fake.random.normalvariate(50, 30) / 100
                 if rand < 0:
                     rand = 0
                 if rand > 1:
@@ -176,31 +176,30 @@ for provider in providers:
 """Calculate 3-yr average and decile"""
 df = pd.DataFrame(all_items)
 
-df['Metric Scaled'] = df.groupby(['Metric', 'Academic Year'])['Metric Score'] \
-    .transform(lambda x: (x-min(x))/(max(x)-min(x)))
+# df['Metric Scaled'] = df.groupby(['Metric', 'Academic Year'])['Metric Score'] \
+#    .transform(lambda x: (x-min(x))/(max(x)-min(x)))
 
-df['3 Year Metric Average'] = df.groupby(['Provider UKPRN', 'Metric'])['Metric Scaled'] \
+df['3 Year Metric Average'] = df.groupby(['Provider UKPRN', 'Metric'])['Metric Score'] \
     .transform("mean")
 
 df['3 Year Metric Decile'] = 11 - df.groupby(['Metric'])['3 Year Metric Average'] \
     .transform(
-    lambda x: pd.qcut(x, 10, duplicates='drop', labels=False)+1)
+    lambda x: pd.qcut(x, 10, duplicates='drop', labels=False) + 1)
 
 df['3 Year Metric Scaled'] = df.groupby(['Metric'])['3 Year Metric Average'] \
-    .transform(lambda x: (x-min(x))/(max(x)-min(x)))
-
-df['Perspective Score'] = df.groupby(['Provider UKPRN', 'Perspective', 'Academic Year'])['Metric Scaled']\
-    .transform("mean")
-
-# df['3 Year Perspective Average'] = df.groupby(['Provider UKPRN', 'Perspective'])['Perspective Score'] \
-#     .transform("mean")
-
-df['3 Year Perspective Scaled'] = df.groupby(['Perspective'])['3 Year Perspective Average'] \
     .transform(lambda x: (x - min(x)) / (max(x) - min(x)))
 
-df['3 Year Perspective Decile'] = 11 - df.groupby(['Perspective'])['3 Year Perspective Scaled'] \
+# df['Perspective Score'] = df.groupby(['Provider UKPRN', 'Perspective', 'Academic Year'])['Metric Scaled'] \
+#    .transform("mean")
+
+df['3 Year Perspective Average'] = df.groupby(['Provider UKPRN', 'Perspective'])['3 Year Metric Scaled'] \
+     .transform("mean")
+
+# df['3 Year Perspective Scaled'] = df.groupby(['Perspective'])['3 Year Perspective Average'] \
+#    .transform(lambda x: (x - min(x)) / (max(x) - min(x)))
+
+df['3 Year Perspective Decile'] = 11 - df.groupby(['Perspective'])['3 Year Perspective Average'] \
     .transform(
-    lambda x: pd.qcut(x, 10, duplicates='drop', labels=False)+1)
+    lambda x: pd.qcut(x, 10, duplicates='drop', labels=False) + 1)
 
 df.to_csv("fake_kef_data.csv", index=False)
-
